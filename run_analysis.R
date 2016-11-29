@@ -2,7 +2,7 @@
 #
 # This script is part of the course project for Getting and Cleaning Data.
 #
-# The purpose of this project is to demonstrate my ability to collect,
+# The purpose of this project is to demonstrate an ability to collect,
 # work with, and clean a data set. The goal is to prepare tidy data that
 # can be used for later analysis.
 #
@@ -14,6 +14,7 @@
 # The following functions are used from package dplyr:
 #   select, group_by, summarize_each
 #
+run_analysis <- function() {
 library(dplyr)
 #
 # Switch to Samsung data subdirectory, read all necessary data, and switch
@@ -30,31 +31,41 @@ y_test <- read.table("test/y_test.txt")
 X_test <- read.table("test/X_test.txt")
 subject_test <- read.table("test/subject_test.txt")
 setwd(savewd)
-
-names(y_train) <- "activityKey"
-names(X_train) <- features[[2]]
-names(subject_train) <- "subject"
+#
+# Add columns identifying activity and subject to measurement data.
+#
 wide_train <- cbind(cbind(y_train, subject_train), X_train)
-names(y_test) <- "activityKey"
-names(X_test) <- features[[2]]
-names(subject_test) <- "subject"
 wide_test <- cbind(cbind(y_test, subject_test), X_test)
-
+#
+# Merge the training and the test sets to create one data set.
+#
 allData <- rbind(wide_train, wide_test)
-
-meanFinder <- grepl("mean()", names(allData), fixed=TRUE)
-stdFinder <- grepl("std()", names(allData), fixed=TRUE)
+#
+# Extract only the measurements on the mean and standard deviation for each measurement.
+#
+featureNames <- levels(features[[2]])
+allColumns <- c("activityKey", "subject", featureNames)
+meanFinder <- grepl("mean()", allColumns, fixed=TRUE)
+stdFinder <- grepl("std()", allColumns, fixed=TRUE)
 myColumns <- c(1, 2, which(meanFinder | stdFinder))
 narrowData <- allData[myColumns]
-
+narrowColumns <- allColumns[myColumns]
+#
+# Appropriately label the data set with descriptive variable names.
+#
+names(narrowData) <- narrowColumns
+#
+# Use descriptive activity names to name the activities in the data set.
+#
 names(activity_labels) <- c("activityKey", "activity")
-
 activityData <- merge(activity_labels, narrowData, by="activityKey")
-
 activityData <- select(activityData, -activityKey)
-
-groupData <- group_by(narrowData, activityKey, subject)
+#
+# Create a second, independent tidy data set with the average of each variable for each
+# activity and each subject.  Save data set as a txt file created with write.table()
+# using row.name=FALSE.
+#
+groupData <- group_by(activityData, activity, subject)
 tidyData <- summarize_each(groupData, funs(mean))
-
 write.table(tidyData, "tidyData.txt", row.name=FALSE)
-
+}
