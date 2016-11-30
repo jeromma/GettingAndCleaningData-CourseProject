@@ -14,7 +14,6 @@
 # The following functions are used from package dplyr:
 #   select, group_by, summarize_each
 #
-run_analysis <- function() {
 library(dplyr)
 #
 # Switch to Samsung data subdirectory, read all necessary data, and switch
@@ -68,4 +67,3 @@ activityData <- select(activityData, -activityKey)
 groupData <- group_by(activityData, activity, subject)
 tidyData <- summarize_each(groupData, funs(mean))
 write.table(tidyData, "tidyData.txt", row.name=FALSE)
-}
