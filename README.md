@@ -32,8 +32,8 @@ run_analysis.R performns the following steps:
 1. Read all necessary data from the Samsung data subdirectory
 2. Add columns identifying activity and subject to measurement data
 3. Merge the training and the test sets to create one data set
-4. Extract only the measurements on the mean and standard deviation for each measurement
-5. Appropriately label the data set with descriptive variable names
+4. Appropriately label the data set with descriptive variable names
+5. Extract only the measurements on the mean and standard deviation for each measurement
 6. Use descriptive activity names to name the activities in the data set
 7. Create a second, independent tidy data set with the average of each variable for each activity and each subject
 8. Save data set as a txt file named *tidyData.txt* created with write.table() using row.name=FALSE

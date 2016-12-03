@@ -39,20 +39,21 @@ wide_test <- cbind(cbind(y_test, subject_test), X_test)
 # Merge the training and the test sets to create one data set.
 #
 allData <- rbind(wide_train, wide_test)
-#
-# Extract only the measurements on the mean and standard deviation for each measurement.
-#
-featureNames <- levels(features[[2]])
-allColumns <- c("activityKey", "subject", featureNames)
-meanFinder <- grepl("mean()", allColumns, fixed=TRUE)
-stdFinder <- grepl("std()", allColumns, fixed=TRUE)
-myColumns <- c(1, 2, which(meanFinder | stdFinder))
-narrowData <- allData[myColumns]
-narrowColumns <- allColumns[myColumns]
+width <- dim(allData)[2]
 #
 # Appropriately label the data set with descriptive variable names.
 #
-names(narrowData) <- narrowColumns
+names(allData)[1] <- "activityKey"
+names(allData)[2] <- "subject"
+names(allData)[3:width] <- as.character(features[[2]])
+#
+# Extract only the measurements on the mean and standard deviation for
+# each measurement.
+#
+meanFinder <- grepl("mean()", names(allData), fixed=TRUE)
+stdFinder <- grepl("std()", names(allData), fixed=TRUE)
+myColumns <- c(1, 2, which(meanFinder | stdFinder))
+narrowData <- allData[myColumns]
 #
 # Use descriptive activity names to name the activities in the data set.
 #
@@ -60,9 +61,9 @@ names(activity_labels) <- c("activityKey", "activity")
 activityData <- merge(activity_labels, narrowData, by="activityKey")
 activityData <- select(activityData, -activityKey)
 #
-# Create a second, independent tidy data set with the average of each variable for each
-# activity and each subject.  Save data set as a txt file created with write.table()
-# using row.name=FALSE.
+# Create a second, independent tidy data set with the average of each
+# variable for each activity and each subject.  Save data set as a txt
+# file created with write.table() using row.name=FALSE.
 #
 groupData <- group_by(activityData, activity, subject)
 tidyData <- summarize_each(groupData, funs(mean))
