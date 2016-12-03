@@ -28,7 +28,8 @@ run_analysis.R loads dplyr and uses the following dplyr functions
 * summarize_each
 
 ### Details
-run_analysis.R performns the following steps:
+run_analysis.R performs the following steps:
+
 1. Read all necessary data from the Samsung data subdirectory
 2. Add columns identifying activity and subject to measurement data
 3. Merge the training and the test sets to create one data set
